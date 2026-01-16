@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+LICENSE
+*.md
+
+# IDE
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backend specific
+backend/target
+backend/.mvn
+backend/mvnw
+backend/mvnw.cmd
+
+# Frontend specific
+frontend/node_modules
+frontend/dist
+frontend/.angular
+frontend/coverage
+frontend/.nyc_output
+
+# Environment files
+.env
+.env.local
+.env.*.local

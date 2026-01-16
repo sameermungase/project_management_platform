@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: smart-project-platform
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smart_project_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:your_password_here}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # Change to validate or none in production when using Flyway
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+# JWT Configuration
+# IMPORTANT: Generate a secure random key for production!
+# You can use: openssl rand -base64 64
+app:
+  jwtSecret: ${JWT_SECRET:your_jwt_secret_key_here_change_in_production}
+  jwtExpirationMs: 86400000  # 24 hours
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  show-actuator: false
+
+# Spring Boot Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

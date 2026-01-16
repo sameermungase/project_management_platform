@@ -1,0 +1,185 @@
+.kanban-container {
+  padding: 20px;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.alert-warning {
+  padding: 15px;
+  background-color: #fff3cd;
+  color: #856404;
+  border-radius: 4px;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  flex: 1;
+  padding-bottom: 20px;
+}
+
+.kanban-column {
+  min-width: 300px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px 8px 0 0;
+  margin: -10px -10px 10px -10px;
+  color: white;
+}
+
+.column-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.task-count {
+  background-color: rgba(255,255,255,0.3);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.status-todo {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.status-in_progress {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.status-done {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.task-list {
+  flex: 1;
+  min-height: 200px;
+  overflow-y: auto;
+}
+
+.task-card {
+  margin-bottom: 10px;
+  cursor: move;
+}
+
+.task-card mat-card {
+  transition: box-shadow 0.3s ease;
+}
+
+.task-card:hover mat-card {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.task-card mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.task-card mat-card-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  flex: 1;
+}
+
+.card-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.description {
+  color: #666;
+  font-size: 14px;
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+.task-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.due-date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  font-size: 12px;
+}
+
+.due-date mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 10px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  opacity: 0.8;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.task-list.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+mat-chip-set {
+  margin: 0;
+}
+
+mat-chip mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}

@@ -1,0 +1,108 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+*.log.*
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+backend/target/
+backend/pom.xml.tag
+backend/pom.xml.releaseBackup
+backend/pom.xml.versionsBackup
+backend/pom.xml.next
+backend/release.properties
+backend/dependency-reduced-pom.xml
+backend/buildNumber.properties
+backend/.mvn/timing.properties
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Node
+frontend/node_modules/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/lerna-debug.log*
+frontend/.pnpm-debug.log*
+
+# Angular
+frontend/dist/
+frontend/.angular/
+frontend/.sass-cache/
+frontend/connect.lock
+frontend/coverage/
+frontend/libpeerconnection.log
+frontend/testem.log
+frontend/typings/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.env
+application-local.yml
+application-prod.yml
+application-dev.yml
+
+# Sensitive configuration files (keep templates only)
+backend/src/main/resources/application.yml
+!backend/src/main/resources/application.yml.template
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build outputs
+build/
+out/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Logs
+logs/
+*.log
+
+# Documentation files (exclude all .md except README.md)
+*.md
+!README.md
