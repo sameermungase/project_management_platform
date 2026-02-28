@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  // Use relative URL that works in both development and Docker environments
+  private apiUrl = '/api/auth';
   private userSubject = new BehaviorSubject<any>(null);
   public user$ = this.userSubject.asObservable();
 
@@ -17,11 +18,13 @@ export class AuthService {
 
   loadUser() {
     const token = localStorage.getItem('token');
-    if (token) {
-        // Decode token or fetch user details if needed. 
-        // For now, assuming token presence means logged in.
-        // Ideally we decode JWT to get username/roles.
-        this.userSubject.next({ token }); 
+    const user = localStorage.getItem('user');
+    if (token && user) {
+      try {
+        this.userSubject.next(JSON.parse(user));
+      } catch (e) {
+        this.userSubject.next({ token });
+      }
     }
   }
 
@@ -29,6 +32,7 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/signin`, credentials).pipe(
       tap((response: any) => {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response));
         this.userSubject.next(response);
       })
     );
@@ -40,6 +44,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.userSubject.next(null);
     this.router.navigate(['/auth/login']);
   }
@@ -54,6 +59,7 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     const user = this.currentUserValue;
+    // Backend sends roles as plain strings without ROLE_ prefix (e.g., 'ADMIN', not 'ROLE_ADMIN')
     return user && user.roles && user.roles.includes(role);
   }
 

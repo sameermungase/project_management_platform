@@ -22,7 +22,7 @@ export interface TaskDependencyRequest {
   providedIn: 'root'
 })
 export class TaskDependencyService {
-  private apiUrl = 'http://localhost:8080/api/task-dependencies';
+  private apiUrl = '/api/task-dependencies';
 
   constructor(private http: HttpClient) {}
 

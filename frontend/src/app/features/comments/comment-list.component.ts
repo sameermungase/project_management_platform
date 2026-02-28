@@ -169,12 +169,22 @@ export class CommentListComponent implements OnInit {
 
   loadComments() {
     if (this.taskId) {
-      this.commentService.getCommentsByTask(this.taskId).subscribe(data => {
-        this.comments = data;
+      this.commentService.getCommentsByTask(this.taskId).subscribe({
+        next: (data) => {
+          this.comments = data;
+        },
+        error: (err) => {
+          console.error('Error loading comments:', err);
+        }
       });
     } else if (this.projectId) {
-      this.commentService.getCommentsByProject(this.projectId).subscribe(data => {
-        this.comments = data;
+      this.commentService.getCommentsByProject(this.projectId).subscribe({
+        next: (data) => {
+          this.comments = data;
+        },
+        error: (err) => {
+          console.error('Error loading comments:', err);
+        }
       });
     }
   }
@@ -185,10 +195,15 @@ export class CommentListComponent implements OnInit {
       taskId: this.taskId,
       projectId: this.projectId
     };
-    this.commentService.createComment(request).subscribe(() => {
-      this.newComment.content = '';
-      this.showAddComment = false;
-      this.loadComments();
+    this.commentService.createComment(request).subscribe({
+      next: () => {
+        this.newComment.content = '';
+        this.showAddComment = false;
+        this.loadComments();
+      },
+      error: (err) => {
+        console.error('Error creating comment:', err);
+      }
     });
   }
 
@@ -208,16 +223,26 @@ export class CommentListComponent implements OnInit {
       taskId: this.taskId,
       projectId: this.projectId
     };
-    this.commentService.updateComment(comment.id, request).subscribe(() => {
-      comment.editing = false;
-      this.loadComments();
+    this.commentService.updateComment(comment.id, request).subscribe({
+      next: () => {
+        comment.editing = false;
+        this.loadComments();
+      },
+      error: (err) => {
+        console.error('Error updating comment:', err);
+      }
     });
   }
 
   deleteComment(commentId: string) {
     if (confirm('Are you sure you want to delete this comment?')) {
-      this.commentService.deleteComment(commentId).subscribe(() => {
-        this.loadComments();
+      this.commentService.deleteComment(commentId).subscribe({
+        next: () => {
+          this.loadComments();
+        },
+        error: (err) => {
+          console.error('Error deleting comment:', err);
+        }
       });
     }
   }
@@ -225,12 +250,22 @@ export class CommentListComponent implements OnInit {
   toggleReaction(comment: Comment, emoji: string) {
     const hasReaction = comment.reactions?.some(r => r.emoji === emoji);
     if (hasReaction) {
-      this.commentService.removeReaction(comment.id!, emoji).subscribe(() => {
-        this.loadComments();
+      this.commentService.removeReaction(comment.id!, emoji).subscribe({
+        next: () => {
+          this.loadComments();
+        },
+        error: (err) => {
+          console.error('Error removing reaction:', err);
+        }
       });
     } else {
-      this.commentService.addReaction(comment.id!, emoji).subscribe(() => {
-        this.loadComments();
+      this.commentService.addReaction(comment.id!, emoji).subscribe({
+        next: () => {
+          this.loadComments();
+        },
+        error: (err) => {
+          console.error('Error adding reaction:', err);
+        }
       });
     }
   }
@@ -253,10 +288,15 @@ export class CommentListComponent implements OnInit {
       projectId: this.projectId,
       parentCommentId: comment.id
     };
-    this.commentService.createComment(request).subscribe(() => {
-      comment.showReplyForm = false;
-      comment.replyContent = '';
-      this.loadComments();
+    this.commentService.createComment(request).subscribe({
+      next: () => {
+        comment.showReplyForm = false;
+        comment.replyContent = '';
+        this.loadComments();
+      },
+      error: (err) => {
+        console.error('Error creating reply:', err);
+      }
     });
   }
 }

@@ -115,11 +115,16 @@ export class TaskDetailComponent implements OnInit {
     if (!this.taskId) return;
     
     this.loading = true;
-    // Since we don't have a getTaskById endpoint, we'll load from list
-    this.taskService.getTasks(0, 1000).subscribe(data => {
-      this.task = data.content.find((t: Task) => t.id === this.taskId) || null;
-      this.loading = false;
-    });
+    this.taskService.getTaskById(this.taskId).subscribe(
+      (task) => {
+        this.task = task;
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error loading task:', error);
+        this.loading = false;
+      }
+    );
   }
 
   editTask() {
@@ -141,8 +146,12 @@ export class TaskDetailComponent implements OnInit {
     if (!this.task?.id) return;
     
     if (confirm('Are you sure you want to delete this task?')) {
-      this.taskService.deleteTask(this.task.id).subscribe(() => {
-        this.router.navigate(['/tasks']);
+      this.taskService.deleteTask(this.task.id).subscribe({
+        next: () => this.router.navigate(['/tasks']),
+        error: (err) => {
+          console.error('Error deleting task:', err);
+          alert('Failed to delete task');
+        }
       });
     }
   }

@@ -6,18 +6,24 @@ export interface Task {
   id?: string;
   title: string;
   description: string;
-  status: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  status: 'TO_DO' | 'IN_PROGRESS' | 'DONE';
   priority: 'LOW' | 'MEDIUM' | 'HIGH';
   dueDate: string;
   projectId: string;
   assigneeId?: string;
+  epicId?: string;
+  epicTitle?: string;
+  milestoneId?: string;
+  milestoneTitle?: string;
+  requestApproval?: boolean;
+  approvalComments?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:8080/api/tasks';
+  private apiUrl = '/api/tasks';
 
   constructor(private http: HttpClient) {}
 
@@ -26,6 +32,10 @@ export class TaskService {
       .set('page', page.toString())
       .set('size', size.toString());
     return this.http.get<any>(this.apiUrl, { params });
+  }
+
+  getTaskById(id: string): Observable<Task> {
+    return this.http.get<Task>(`${this.apiUrl}/${id}`);
   }
 
   getTasksByProject(projectId: string, page: number = 0, size: number = 10): Observable<any> {

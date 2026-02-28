@@ -58,6 +58,20 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getTasksByProjectId(projectId, pageable));
     }
 
+    @Operation(summary = "Get task by ID", description = "Returns a specific task by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Not a member of the project")
+    })
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MANAGER') or hasAuthority('ADMIN')")
+    public ResponseEntity<TaskDTO> getTaskById(
+            @Parameter(description = "Task UUID") @PathVariable UUID id) {
+        return ResponseEntity.ok(taskService.getTaskById(id));
+    }
+
     @Operation(summary = "Update task", description = "Updates task details including status, assignment, and priority")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task updated successfully"),

@@ -51,6 +51,19 @@ public class Task {
     @JoinColumn(name = "parent_task_id")
     private Task parentTask;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "epic_id")
+    private Epic epic;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "milestone_id")
+    private Milestone milestone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility_level")
+    @Builder.Default
+    private VisibilityLevel visibilityLevel = VisibilityLevel.PUBLIC;
+
     @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<Task> subtasks = new java.util.ArrayList<>();
@@ -62,6 +75,14 @@ public class Task {
     @OneToMany(mappedBy = "dependsOnTask", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<TaskDependency> dependentTasks = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<TaskEstimate> estimates = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<TaskRequiredSkill> requiredSkills = new java.util.ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

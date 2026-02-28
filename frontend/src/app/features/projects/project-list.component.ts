@@ -104,7 +104,13 @@ export class ProjectListComponent implements OnInit {
 
   deleteProject(id: string) {
     if (confirm('Are you sure you want to delete this project?')) {
-      this.projectService.deleteProject(id).subscribe(() => this.loadProjects());
+      this.projectService.deleteProject(id).subscribe({
+        next: () => this.loadProjects(),
+        error: (err) => {
+          console.error('Error deleting project:', err);
+          alert('Failed to delete project');
+        }
+      });
     }
   }
 

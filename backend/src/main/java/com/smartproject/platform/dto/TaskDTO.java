@@ -19,6 +19,10 @@ public class TaskDTO {
     private UUID projectId;
     private UUID assigneeId;
     private String assigneeUsername;
+    private UUID epicId;
+    private String epicTitle;
+    private UUID milestoneId;
+    private String milestoneTitle;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

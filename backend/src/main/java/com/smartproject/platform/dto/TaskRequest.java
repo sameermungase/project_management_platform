@@ -26,4 +26,12 @@ public class TaskRequest {
     private UUID projectId;
     
     private UUID assigneeId;
+    
+    private UUID epicId;
+    
+    private UUID milestoneId;
+    
+    private boolean requestApproval = false;
+    
+    private String approvalComments;
 }

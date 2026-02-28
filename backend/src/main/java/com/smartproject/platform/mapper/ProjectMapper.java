@@ -30,6 +30,18 @@ public class ProjectMapper {
                     .map(User::getId)
                     .collect(Collectors.toSet());
             dto.setMemberIds(memberIds);
+            
+            // Also map to full member info
+            java.util.List<ProjectDTO.MemberInfo> memberList = project.getMembers().stream()
+                    .map(user -> {
+                        ProjectDTO.MemberInfo info = new ProjectDTO.MemberInfo();
+                        info.setId(user.getId());
+                        info.setUsername(user.getUsername());
+                        info.setEmail(user.getEmail());
+                        return info;
+                    })
+                    .collect(Collectors.toList());
+            dto.setMembers(memberList);
         }
         
         return dto;

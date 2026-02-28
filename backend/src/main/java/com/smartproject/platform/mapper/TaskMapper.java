@@ -25,6 +25,16 @@ public class TaskMapper {
             dto.setAssigneeUsername(task.getAssignee().getUsername());
         }
         
+        if (task.getEpic() != null) {
+            dto.setEpicId(task.getEpic().getId());
+            dto.setEpicTitle(task.getEpic().getTitle());
+        }
+        
+        if (task.getMilestone() != null) {
+            dto.setMilestoneId(task.getMilestone().getId());
+            dto.setMilestoneTitle(task.getMilestone().getTitle());
+        }
+        
         dto.setCreatedAt(task.getCreatedAt());
         dto.setUpdatedAt(task.getUpdatedAt());
         

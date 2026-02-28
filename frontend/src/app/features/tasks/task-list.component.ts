@@ -120,21 +120,36 @@ export class TaskListComponent implements OnInit {
   loadTasks() {
     if (this.projectId) {
       // Load tasks for specific project
-      this.taskService.getTasksByProject(this.projectId, this.pageIndex, this.pageSize).subscribe(data => {
-        this.tasks = data.content;
-        this.totalElements = data.totalElements;
+      this.taskService.getTasksByProject(this.projectId, this.pageIndex, this.pageSize).subscribe({
+        next: (data) => {
+          this.tasks = data.content;
+          this.totalElements = data.totalElements;
+        },
+        error: (err) => {
+          console.error('Error loading tasks:', err);
+        }
       });
     } else if (this.authService.isAdmin()) {
       // Admin sees all tasks
-      this.taskService.getAllTasksAdmin(this.pageIndex, this.pageSize).subscribe(data => {
-        this.tasks = data.content;
-        this.totalElements = data.totalElements;
+      this.taskService.getAllTasksAdmin(this.pageIndex, this.pageSize).subscribe({
+        next: (data) => {
+          this.tasks = data.content;
+          this.totalElements = data.totalElements;
+        },
+        error: (err) => {
+          console.error('Error loading tasks:', err);
+        }
       });
     } else {
       // Load all user tasks
-      this.taskService.getTasks(this.pageIndex, this.pageSize).subscribe(data => {
-        this.tasks = data.content;
-        this.totalElements = data.totalElements;
+      this.taskService.getTasks(this.pageIndex, this.pageSize).subscribe({
+        next: (data) => {
+          this.tasks = data.content;
+          this.totalElements = data.totalElements;
+        },
+        error: (err) => {
+          console.error('Error loading tasks:', err);
+        }
       });
     }
   }
@@ -160,7 +175,13 @@ export class TaskListComponent implements OnInit {
 
   deleteTask(id: string) {
     if (confirm('Are you sure you want to delete this task?')) {
-      this.taskService.deleteTask(id).subscribe(() => this.loadTasks());
+      this.taskService.deleteTask(id).subscribe({
+        next: () => this.loadTasks(),
+        error: (err) => {
+          console.error('Error deleting task:', err);
+          alert('Failed to delete task');
+        }
+      });
     }
   }
 

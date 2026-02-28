@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Project, ProjectService } from './project.service';
 import { UserService, User } from '../users/user.service';
+import { ProjectRoleAssignmentDialogComponent } from './project-role-assignment-dialog.component';
 
 @Component({
   selector: 'app-project-members-dialog',
@@ -29,7 +30,12 @@ import { UserService, User } from '../users/user.service';
     <h2 mat-dialog-title>Manage Members: {{ data.project.name }}</h2>
     <mat-dialog-content>
       <div class="members-container">
-        <h3>Current Members</h3>
+        <div class="header-actions">
+          <h3>Current Members</h3>
+          <button mat-raised-button color="accent" (click)="openRoleAssignmentDialog()" matTooltip="Manage project-level roles">
+            <mat-icon>security</mat-icon> Manage Roles
+          </button>
+        </div>
         <mat-list>
           <mat-list-item *ngFor="let member of currentMembers">
             <span matListItemTitle>{{ member.username }}</span>
@@ -68,6 +74,8 @@ import { UserService, User } from '../users/user.service';
   `,
   styles: [`
     .members-container { min-width: 400px; }
+    .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .header-actions h3 { margin: 0; }
     .add-member-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
     .w-full { width: 100%; }
     mat-list-item { display: flex; justify-content: space-between; align-items: center; }
@@ -86,7 +94,8 @@ export class ProjectMembersDialogComponent implements OnInit {
     private fb: FormBuilder,
     private projectService: ProjectService,
     private userService: UserService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.addMemberForm = this.fb.group({
       userId: ['', Validators.required]
@@ -98,56 +107,36 @@ export class ProjectMembersDialogComponent implements OnInit {
   }
 
   loadData() {
-    this.loading = true;
-    // Load all users first
-    this.userService.getUsers().subscribe({
-      next: (users) => {
-        this.allUsers = users;
-        // Refresh project data to get latest members
-        if (this.data.project.id) {
-            this.projectService.getProject(this.data.project.id).subscribe({
-                next: (project) => {
-                    this.data.project = project;
-                    this.updateMemberLists();
-                    this.loading = false;
-                },
-                error: (err) => {
-                    console.error('Error refreshing project', err);
-                    this.loading = false;
-                }
-            });
-        }
+    if (!this.data.project.id) return;
+    // Load members
+    this.projectService.getProject(this.data.project.id).subscribe({
+      next: (project: any) => {
+        // Members are returned in the project as either 'members' (full objects) or we can load from users
+        this.currentMembers = project.members || [];
+        this.userService.getUsers().subscribe(users => {
+          const allUsersData = (users as any).content || users;
+          this.allUsers = allUsersData;
+          this.availableUsers = this.allUsers.filter(u => !this.currentMembers.find(cm => cm.id === u.id));
+        });
       },
       error: (err) => {
-        console.error('Error loading users', err);
-        this.snackBar.open('Failed to load users. You might not have permission.', 'Close', { duration: 3000 });
-        this.loading = false;
+        console.error('Error loading project:', err);
       }
     });
   }
 
-  updateMemberLists() {
-    const memberIds = this.data.project.memberIds || [];
-    this.currentMembers = this.allUsers.filter(u => memberIds.includes(u.id));
-    this.availableUsers = this.allUsers.filter(u => !memberIds.includes(u.id));
-  }
-
   addMember() {
-    if (this.addMemberForm.invalid) return;
-    
-    const userId = this.addMemberForm.get('userId')?.value;
-    const projectId = this.data.project.id;
-
-    if (projectId && userId) {
+    if (this.addMemberForm.valid && this.data.project.id) {
       this.loading = true;
-      this.projectService.addMemberToProject(projectId, userId).subscribe({
+      const userId = this.addMemberForm.value.userId;
+      this.projectService.addMemberToProject(this.data.project.id, userId).subscribe({
         next: () => {
           this.snackBar.open('Member added successfully', 'Close', { duration: 2000 });
+          this.loadData();
           this.addMemberForm.reset();
-          this.loadData(); // Reload to refresh lists
+          this.loading = false;
         },
-        error: (err) => {
-          console.error('Error adding member', err);
+        error: (err: any) => {
           this.snackBar.open('Failed to add member', 'Close', { duration: 3000 });
           this.loading = false;
         }
@@ -173,5 +162,17 @@ export class ProjectMembersDialogComponent implements OnInit {
             }
         });
     }
+  }
+
+  openRoleAssignmentDialog() {
+    const dialogRef = this.dialog.open(ProjectRoleAssignmentDialogComponent, {
+      width: '600px',
+      data: { project: this.data.project }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      // Refresh data if needed
+      this.loadData();
+    });
   }
 }

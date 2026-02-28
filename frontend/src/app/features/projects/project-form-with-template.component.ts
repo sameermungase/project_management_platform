@@ -67,12 +67,12 @@ export class ProjectFormWithTemplateComponent {
     @Inject(MAT_DIALOG_DATA) public data: Project
   ) {
     this.form = this.fb.group({
-      name: [data.name || '', Validators.required],
-      description: [data.description || ''],
+      name: [data?.name || '', Validators.required],
+      description: [data?.description || ''],
       templateId: [null]
     });
 
-    if (!data.id) {
+    if (!data?.id) {
       this.loadTemplates();
     }
   }

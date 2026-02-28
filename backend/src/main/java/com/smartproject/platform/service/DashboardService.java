@@ -149,7 +149,6 @@ public class DashboardService {
         LocalDate now = LocalDate.now();
         LocalDate weekStart = now.minusDays(now.getDayOfWeek().getValue() - 1);
         LocalDate lastWeekStart = weekStart.minusWeeks(1);
-        LocalDate lastWeekEnd = weekStart.minusDays(1);
 
         long tasksThisWeek = allUserTasks.stream()
                 .filter(t -> t.getStatus() == TaskStatus.DONE

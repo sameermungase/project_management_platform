@@ -125,24 +125,40 @@ export class TemplateSelectorComponent implements OnInit {
   }
 
   loadTemplates() {
-    this.templateService.getAllTemplates().subscribe(data => {
-      this.templates = data;
+    this.templateService.getAllTemplates().subscribe({
+      next: (data) => {
+        this.templates = data;
+      },
+      error: (err) => {
+        console.error('Error loading templates:', err);
+      }
     });
   }
 
   createTemplate() {
-    this.templateService.createTemplate(this.newTemplate).subscribe(() => {
-      this.showCreateTemplate = false;
-      this.newTemplate = { name: '', description: '', templateType: 'CUSTOM', isPublic: false, templateTasks: [] };
-      this.loadTemplates();
+    this.templateService.createTemplate(this.newTemplate).subscribe({
+      next: () => {
+        this.showCreateTemplate = false;
+        this.newTemplate = { name: '', description: '', templateType: 'CUSTOM', isPublic: false, templateTasks: [] };
+        this.loadTemplates();
+      },
+      error: (err) => {
+        console.error('Error creating template:', err);
+      }
     });
   }
 
   useTemplate(template: ProjectTemplate) {
     const projectName = prompt('Enter project name:');
     if (projectName) {
-      this.templateService.createProjectFromTemplate(template.id!, { name: projectName }).subscribe(project => {
-        this.router.navigate(['/projects']);
+      this.templateService.createProjectFromTemplate(template.id!, { name: projectName }).subscribe({
+        next: (project) => {
+          this.router.navigate(['/projects']);
+        },
+        error: (err) => {
+          console.error('Error creating project from template:', err);
+          alert('Failed to create project from template');
+        }
       });
     }
   }
@@ -154,8 +170,14 @@ export class TemplateSelectorComponent implements OnInit {
 
   deleteTemplate(templateId: string) {
     if (confirm('Are you sure you want to delete this template?')) {
-      this.templateService.deleteTemplate(templateId).subscribe(() => {
-        this.loadTemplates();
+      this.templateService.deleteTemplate(templateId).subscribe({
+        next: () => {
+          this.loadTemplates();
+        },
+        error: (err) => {
+          console.error('Error deleting template:', err);
+          alert('Failed to delete template');
+        }
       });
     }
   }

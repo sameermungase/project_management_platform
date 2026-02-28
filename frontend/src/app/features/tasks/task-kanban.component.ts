@@ -93,7 +93,7 @@ export class TaskKanbanComponent implements OnInit {
   projectId: string | null = null;
   
   statuses = [
-    { key: 'TODO', label: 'To Do' },
+    { key: 'TO_DO', label: 'To Do' },
     { key: 'IN_PROGRESS', label: 'In Progress' },
     { key: 'DONE', label: 'Done' }
   ];
@@ -116,8 +116,13 @@ export class TaskKanbanComponent implements OnInit {
   loadTasks() {
     if (this.projectId) {
       // Load all tasks without pagination for Kanban view
-      this.taskService.getTasksByProject(this.projectId, 0, 1000).subscribe(data => {
-        this.tasks = data.content;
+      this.taskService.getTasksByProject(this.projectId, 0, 1000).subscribe({
+        next: (data) => {
+          this.tasks = data.content;
+        },
+        error: (err) => {
+          console.error('Error loading tasks:', err);
+        }
       });
     }
   }
@@ -145,12 +150,16 @@ export class TaskKanbanComponent implements OnInit {
       
       // Update task status
       const task = event.container.data[event.currentIndex];
-      const newStatus = event.container.id as 'TODO' | 'IN_PROGRESS' | 'DONE';
+      const newStatus = event.container.id as 'TO_DO' | 'IN_PROGRESS' | 'DONE';
       const updatedTask = { ...task, status: newStatus };
       
-      this.taskService.updateTask(task.id!, updatedTask).subscribe(() => {
-        // Task updated successfully
-        this.loadTasks();
+      this.taskService.updateTask(task.id!, updatedTask).subscribe({
+        next: () => {
+          this.loadTasks();
+        },
+        error: (err) => {
+          console.error('Error updating task:', err);
+        }
       });
     }
   }
@@ -170,7 +179,13 @@ export class TaskKanbanComponent implements OnInit {
 
   deleteTask(id: string) {
     if (confirm('Are you sure you want to delete this task?')) {
-      this.taskService.deleteTask(id).subscribe(() => this.loadTasks());
+      this.taskService.deleteTask(id).subscribe({
+        next: () => this.loadTasks(),
+        error: (err) => {
+          console.error('Error deleting task:', err);
+          alert('Failed to delete task');
+        }
+      });
     }
   }
 

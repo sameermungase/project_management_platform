@@ -104,11 +104,21 @@ export class TaskDependencyComponent implements OnInit {
   }
 
   loadDependencies() {
-    this.dependencyService.getDependencies(this.taskId).subscribe(data => {
-      this.dependencies = data;
+    this.dependencyService.getDependencies(this.taskId).subscribe({
+      next: (data) => {
+        this.dependencies = data;
+      },
+      error: (err) => {
+        console.error('Error loading dependencies:', err);
+      }
     });
-    this.dependencyService.getDependentTasks(this.taskId).subscribe(data => {
-      this.dependentTasks = data;
+    this.dependencyService.getDependentTasks(this.taskId).subscribe({
+      next: (data) => {
+        this.dependentTasks = data;
+      },
+      error: (err) => {
+        console.error('Error loading dependent tasks:', err);
+      }
     });
   }
 
@@ -121,18 +131,27 @@ export class TaskDependencyComponent implements OnInit {
         dependsOnTaskId: dependsOnTaskId,
         dependencyType: 'BLOCKS'
       };
-      this.dependencyService.createDependency(request).subscribe(() => {
-        this.loadDependencies();
-      }, error => {
-        alert('Error creating dependency: ' + (error.error?.message || 'Unknown error'));
+      this.dependencyService.createDependency(request).subscribe({
+        next: () => {
+          this.loadDependencies();
+        },
+        error: (error) => {
+          alert('Error creating dependency: ' + (error.error?.message || 'Unknown error'));
+        }
       });
     }
   }
 
   deleteDependency(dependencyId: string) {
     if (confirm('Are you sure you want to remove this dependency?')) {
-      this.dependencyService.deleteDependency(dependencyId).subscribe(() => {
-        this.loadDependencies();
+      this.dependencyService.deleteDependency(dependencyId).subscribe({
+        next: () => {
+          this.loadDependencies();
+        },
+        error: (err) => {
+          console.error('Error deleting dependency:', err);
+          alert('Failed to delete dependency');
+        }
       });
     }
   }

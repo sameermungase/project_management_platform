@@ -42,7 +42,7 @@ export interface TemplateTaskRequest {
   providedIn: 'root'
 })
 export class TemplateService {
-  private apiUrl = 'http://localhost:8080/api/templates';
+  private apiUrl = '/api/templates';
 
   constructor(private http: HttpClient) {}
 

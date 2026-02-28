@@ -6,13 +6,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { PermissionService } from '../core/permission.service';
 import { SharedModule } from '../shared/shared.module';
 import { Observable, of } from 'rxjs';
+import { NotificationBadgeComponent } from '../features/notifications/notification-badge.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, NotificationBadgeComponent, CommonModule],
   template: `
     <mat-sidenav-container class="sidenav-container">
       <mat-sidenav #drawer class="sidenav" fixedInViewport
@@ -33,6 +36,27 @@ import { Observable, of } from 'rxjs';
             <mat-icon matListItemIcon>assignment</mat-icon>
             <span matListItemTitle>Tasks</span>
           </a>
+          <a mat-list-item routerLink="/epics">
+            <mat-icon matListItemIcon>stars</mat-icon>
+            <span matListItemTitle>Epics</span>
+          </a>
+          <a mat-list-item routerLink="/milestones">
+            <mat-icon matListItemIcon>flag</mat-icon>
+            <span matListItemTitle>Milestones</span>
+          </a>
+          
+          <!-- Role-Based Visibility: Approvals -->
+          <a mat-list-item routerLink="/approvals" *ngIf="canViewApprovals()">
+            <mat-icon matListItemIcon>approval</mat-icon>
+            <span matListItemTitle>Approvals</span>
+          </a>
+          
+          <!-- Role-Based Visibility: Decisions -->
+          <a mat-list-item routerLink="/decisions" *ngIf="canViewDecisions()">
+            <mat-icon matListItemIcon>gavel</mat-icon>
+            <span matListItemTitle>Decisions</span>
+          </a>
+          
           <a mat-list-item routerLink="/profile">
             <mat-icon matListItemIcon>person</mat-icon>
             <span matListItemTitle>Profile</span>
@@ -55,6 +79,7 @@ import { Observable, of } from 'rxjs';
           </button>
           <span>Application</span>
           <span class="spacer"></span>
+          <app-notification-badge></app-notification-badge>
           <button mat-icon-button (click)="logout()">
             <mat-icon>logout</mat-icon>
           </button>
@@ -76,16 +101,25 @@ export class MainLayoutComponent {
   // Observable for handset detection - returns false for desktop view
   isHandset$: Observable<boolean> = of(false);
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private permissionService: PermissionService
+  ) {}
 
   logout() {
     this.authService.logout();
   }
 
   isAdmin(): boolean {
-    // TODO: Decode JWT token to check if user has ADMIN role
-    // For now, return true to show the menu (proper implementation needed)
     const user = this.authService.currentUserValue;
     return user && user.roles && user.roles.includes('ADMIN');
+  }
+
+  canViewApprovals(): boolean {
+    return this.permissionService.canViewApprovals();
+  }
+
+  canViewDecisions(): boolean {
+    return this.permissionService.canViewDecisions();
   }
 }

@@ -42,7 +42,7 @@ export class RoleEditDialogComponent {
     private fb: FormBuilder
   ) {
     this.roleForm = this.fb.group({
-      roles: [data.user.roles || []]
+      roles: [data?.user?.roles || []]
     });
   }
 
